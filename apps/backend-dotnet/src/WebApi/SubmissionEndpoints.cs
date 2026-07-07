@@ -59,5 +59,30 @@ public static class SubmissionEndpoints
                 return Results.BadRequest(ApiResponse<object>.Fail("SUBMIT_FAILED", ex.Message, "", httpContext.TraceIdentifier));
             }
         });
+
+        // Manager APIs
+        var managerApi = app.MapGroup("/api/manager/assignments").RequireAuthorization("ManagerOrAdmin");
+
+        managerApi.MapGet("/{assignmentId:guid}/submissions", async (Guid assignmentId, ISubmissionService service, HttpContext httpContext, CancellationToken ct) =>
+        {
+            var result = await service.GetSubmissionsForAssignmentAsync(assignmentId, ct);
+            return Results.Ok(ApiResponse<IReadOnlyList<ManagerSubmissionDto>>.Ok(result, httpContext.TraceIdentifier));
+        });
+
+        managerApi.MapGet("/submissions/{submissionId:guid}", async (Guid submissionId, ISubmissionService service, HttpContext httpContext, CancellationToken ct) =>
+        {
+            var result = await service.GetSubmissionDetailForManagerAsync(submissionId, ct);
+            return result is not null
+                ? Results.Ok(ApiResponse<SubmissionDto>.Ok(result, httpContext.TraceIdentifier))
+                : Results.NotFound();
+        });
+
+        managerApi.MapPost("/submissions/{submissionId:guid}/grade", async (Guid submissionId, GradeSubmissionRequest request, ISubmissionService service, HttpContext httpContext, CancellationToken ct) =>
+        {
+            var result = await service.GradeSubmissionAsync(submissionId, request, ct);
+            return result is not null
+                ? Results.Ok(ApiResponse<SubmissionDto>.Ok(result, httpContext.TraceIdentifier))
+                : Results.BadRequest();
+        });
     }
 }

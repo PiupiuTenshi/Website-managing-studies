@@ -60,3 +60,21 @@ export async function submitAssignment(assignmentId: string, request: SubmitAssi
   });
   return response.data;
 }
+
+export async function getManagerSubmissions(assignmentId: string): Promise<import('./types').ManagerSubmission[]> {
+  const response = await fetchWithAuth(`${getApiBaseUrl()}/api/manager/assignments/${assignmentId}/submissions`);
+  return response.data;
+}
+
+export async function getManagerSubmissionDetail(submissionId: string): Promise<Submission> {
+  const response = await fetchWithAuth(`${getApiBaseUrl()}/api/manager/assignments/submissions/${submissionId}`);
+  return response.data;
+}
+
+export async function gradeSubmission(submissionId: string, request: import('./types').GradeSubmissionRequest): Promise<Submission> {
+  const response = await fetchWithAuth(`${getApiBaseUrl()}/api/manager/assignments/submissions/${submissionId}/grade`, {
+    method: "POST",
+    body: JSON.stringify(request)
+  });
+  return response.data;
+}

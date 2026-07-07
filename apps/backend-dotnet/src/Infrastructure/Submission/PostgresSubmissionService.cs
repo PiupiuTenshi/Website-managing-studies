@@ -185,6 +185,98 @@ internal sealed class PostgresSubmissionService(DatabaseOptions databaseOptions)
         }
     }
 
+    public async Task<IReadOnlyList<ManagerSubmissionDto>> GetSubmissionsForAssignmentAsync(Guid assignmentId, CancellationToken ct)
+    {
+        await using var connection = await OpenConnectionAsync(ct);
+        
+        // This query finds all students who were assigned this assignment,
+        // and left joins their submissions.
+        var sql = """
+            with assigned_students as (
+                select ce.student_id as student_id
+                from assignment_targets at
+                inner join class_enrollments ce on at.target_id = ce.class_room_id
+                where at.assignment_id = @assignmentId and at.target_type = 'ClassRoom' and ce.deleted_at is null and ce.status = 'Active'
+                union
+                select at.target_id as student_id
+                from assignment_targets at
+                where at.assignment_id = @assignmentId and at.target_type = 'Student'
+            )
+            select s.id, @assignmentId as assignment_id, ast.student_id, u.full_name,
+                   coalesce(s.status, 'Not Submitted') as status, s.submitted_at, s.graded_at, s.grade_score, s.created_at
+            from assigned_students ast
+            inner join users u on ast.student_id = u.id
+            left join submissions s on ast.student_id = s.student_id and s.assignment_id = @assignmentId
+            order by u.full_name
+            """;
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("assignmentId", assignmentId);
+
+        var result = new List<ManagerSubmissionDto>();
+        await using var reader = await command.ExecuteReaderAsync(ct);
+        while (await reader.ReadAsync(ct))
+        {
+            result.Add(new ManagerSubmissionDto(
+                reader.IsDBNull(0) ? Guid.Empty : reader.GetGuid(0),
+                reader.GetGuid(1),
+                reader.GetGuid(2),
+                reader.GetString(3),
+                reader.GetString(4),
+                reader.IsDBNull(5) ? null : reader.GetFieldValue<DateTimeOffset>(5),
+                reader.IsDBNull(6) ? null : reader.GetFieldValue<DateTimeOffset>(6),
+                reader.IsDBNull(7) ? null : reader.GetDecimal(7),
+                reader.IsDBNull(8) ? DateTimeOffset.MinValue : reader.GetFieldValue<DateTimeOffset>(8)));
+        }
+
+        return result;
+    }
+
+    public async Task<SubmissionDto?> GetSubmissionDetailForManagerAsync(Guid submissionId, CancellationToken ct)
+    {
+        await using var connection = await OpenConnectionAsync(ct);
+        await using var command = new NpgsqlCommand(
+            """
+            select id, assignment_id, student_id, content_json, status, submitted_at, graded_at, grade_score, feedback_json, created_at, updated_at
+            from submissions
+            where id = @submissionId
+            """,
+            connection);
+
+        command.Parameters.AddWithValue("submissionId", submissionId);
+
+        await using var reader = await command.ExecuteReaderAsync(ct);
+        if (await reader.ReadAsync(ct))
+        {
+            return ReadSubmission(reader);
+        }
+
+        return null;
+    }
+
+    public async Task<SubmissionDto?> GradeSubmissionAsync(Guid submissionId, GradeSubmissionRequest request, CancellationToken ct)
+    {
+        await using var connection = await OpenConnectionAsync(ct);
+        await using var command = new NpgsqlCommand(
+            """
+            update submissions
+            set grade_score = @gradeScore, feedback_json = cast(@feedbackJson as jsonb), status = 'Graded', graded_at = now(), updated_at = now()
+            where id = @submissionId
+            """,
+            connection);
+
+        command.Parameters.AddWithValue("submissionId", submissionId);
+        command.Parameters.AddWithValue("gradeScore", request.GradeScore);
+        command.Parameters.AddWithValue("feedbackJson", request.FeedbackJson is null ? DBNull.Value : JsonSerializer.Serialize(request.FeedbackJson));
+
+        var rowsAffected = await command.ExecuteNonQueryAsync(ct);
+        if (rowsAffected > 0)
+        {
+             return await GetSubmissionDetailForManagerAsync(submissionId, ct);
+        }
+        return null;
+    }
+
     private static SubmissionDto ReadSubmission(NpgsqlDataReader reader)
     {
         return new SubmissionDto(

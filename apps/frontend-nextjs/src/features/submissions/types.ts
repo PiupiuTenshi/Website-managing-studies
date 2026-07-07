@@ -34,3 +34,20 @@ export interface DraftSubmissionRequest {
 export interface SubmitAssignmentRequest {
   contentJson?: any | null;
 }
+
+export interface ManagerSubmission {
+  id: string;
+  assignmentId: string;
+  studentId: string;
+  studentName: string;
+  status: string;
+  submittedAt: string | null;
+  gradedAt: string | null;
+  gradeScore: number | null;
+  createdAt: string;
+}
+
+export interface GradeSubmissionRequest {
+  gradeScore: number;
+  feedbackJson?: any | null;
+}

@@ -100,6 +100,14 @@ export default function AssignmentDetailPage() {
                   Phát hành (Publish)
                 </button>
               )}
+              {assignment.status !== 'Draft' && (
+                <Link
+                  href={`/manager/assignments/${assignment.id}/submissions`}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 font-medium shadow-sm"
+                >
+                  Xem bài nộp
+                </Link>
+              )}
           </div>
         </div>
 

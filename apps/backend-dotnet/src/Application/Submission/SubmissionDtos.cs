@@ -44,3 +44,18 @@ public sealed record StudentAssignmentDto(
     string? SubmissionStatus, // Null if not started
     DateTimeOffset? SubmittedAt,
     decimal? GradeScore);
+
+public sealed record ManagerSubmissionDto(
+    Guid Id,
+    Guid AssignmentId,
+    Guid StudentId,
+    string StudentName,
+    string Status,
+    DateTimeOffset? SubmittedAt,
+    DateTimeOffset? GradedAt,
+    decimal? GradeScore,
+    DateTimeOffset CreatedAt);
+
+public sealed record GradeSubmissionRequest(
+    decimal GradeScore,
+    JsonDocument? FeedbackJson);

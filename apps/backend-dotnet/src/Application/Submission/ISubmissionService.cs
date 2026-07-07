@@ -8,5 +8,8 @@ public interface ISubmissionService
     Task<SubmissionDto?> DraftSubmissionAsync(Guid assignmentId, Guid studentId, DraftSubmissionRequest request, CancellationToken ct);
     Task<SubmissionDto?> SubmitAsync(Guid assignmentId, Guid studentId, SubmitAssignmentRequest request, CancellationToken ct);
 
-    // Later: Admin/Manager grading APIs...
+    // Manager APIs
+    Task<IReadOnlyList<ManagerSubmissionDto>> GetSubmissionsForAssignmentAsync(Guid assignmentId, CancellationToken ct);
+    Task<SubmissionDto?> GetSubmissionDetailForManagerAsync(Guid submissionId, CancellationToken ct);
+    Task<SubmissionDto?> GradeSubmissionAsync(Guid submissionId, GradeSubmissionRequest request, CancellationToken ct);
 }
