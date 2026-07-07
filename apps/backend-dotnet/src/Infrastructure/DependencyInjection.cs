@@ -31,6 +31,10 @@ public static class DependencyInjection
         services.AddScoped<IOrganizationService, PostgresOrganizationService>();
         services.AddScoped<IAssignmentAuthoringService, PostgresAssignmentAuthoringService>();
         services.AddScoped<ISubmissionService, PostgresSubmissionService>();
+        
+        services.Configure<RemoteAssignment.Application.Email.SmtpOptions>(configuration.GetSection(RemoteAssignment.Application.Email.SmtpOptions.SectionName));
+        services.AddScoped<RemoteAssignment.Application.Email.IEmailService, RemoteAssignment.Infrastructure.Email.MailKitEmailService>();
+        
         services.AddHostedService<AuthBootstrapService>();
 
         return services;

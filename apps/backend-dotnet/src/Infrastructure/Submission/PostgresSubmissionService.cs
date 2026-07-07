@@ -2,10 +2,11 @@ using System.Data;
 using System.Text.Json;
 using Npgsql;
 using RemoteAssignment.Application.Submission;
+using RemoteAssignment.Application.Email;
 
 namespace RemoteAssignment.Infrastructure.Submission;
 
-internal sealed class PostgresSubmissionService(DatabaseOptions databaseOptions) : ISubmissionService
+internal sealed class PostgresSubmissionService(DatabaseOptions databaseOptions, IEmailService emailService) : ISubmissionService
 {
     private async Task<NpgsqlConnection> OpenConnectionAsync(CancellationToken cancellationToken)
     {
@@ -176,7 +177,33 @@ internal sealed class PostgresSubmissionService(DatabaseOptions databaseOptions)
             await command.ExecuteScalarAsync(ct);
             await transaction.CommitAsync(ct);
 
-            return await GetSubmissionByAssignmentAsync(assignmentId, studentId, ct);
+            var submissionDto = await GetSubmissionByAssignmentAsync(assignmentId, studentId, ct);
+
+            // Fetch teacher email to notify
+            await using var teacherCommand = new NpgsqlCommand(
+                "select u.email, u.full_name, a.title from assignments a inner join users u on a.created_by = u.id where a.id = @assignmentId",
+                connection, transaction);
+            teacherCommand.Parameters.AddWithValue("assignmentId", assignmentId);
+            await using (var teacherReader = await teacherCommand.ExecuteReaderAsync(ct))
+            {
+                if (await teacherReader.ReadAsync(ct))
+                {
+                    var email = teacherReader.GetString(0);
+                    var name = teacherReader.GetString(1);
+                    var title = teacherReader.GetString(2);
+                    
+                    var message = new EmailMessage(
+                        email, 
+                        name, 
+                        $"New Submission: {title}", 
+                        $"<p>Hello {name},</p><p>A student has submitted their assignment for <b>{title}</b>.</p><p>Status: {status}</p>");
+                    
+                    // Fire and forget so we don't block
+                    _ = Task.Run(() => emailService.SendEmailAsync(message, CancellationToken.None));
+                }
+            }
+
+            return submissionDto;
         }
         catch
         {
@@ -272,7 +299,33 @@ internal sealed class PostgresSubmissionService(DatabaseOptions databaseOptions)
         var rowsAffected = await command.ExecuteNonQueryAsync(ct);
         if (rowsAffected > 0)
         {
-             return await GetSubmissionDetailForManagerAsync(submissionId, ct);
+             var updatedSubmission = await GetSubmissionDetailForManagerAsync(submissionId, ct);
+             
+             // Fetch student email to notify
+             await using var studentCommand = new NpgsqlCommand(
+                 "select u.email, u.full_name, a.title from submissions s inner join users u on s.student_id = u.id inner join assignments a on s.assignment_id = a.id where s.id = @submissionId",
+                 connection);
+             studentCommand.Parameters.AddWithValue("submissionId", submissionId);
+             
+             await using (var studentReader = await studentCommand.ExecuteReaderAsync(ct))
+             {
+                 if (await studentReader.ReadAsync(ct))
+                 {
+                     var email = studentReader.GetString(0);
+                     var name = studentReader.GetString(1);
+                     var title = studentReader.GetString(2);
+                     
+                     var message = new EmailMessage(
+                         email, 
+                         name, 
+                         $"Assignment Graded: {title}", 
+                         $"<p>Hello {name},</p><p>Your assignment <b>{title}</b> has been graded.</p><p>Score: {request.GradeScore}/100</p>");
+                     
+                     _ = Task.Run(() => emailService.SendEmailAsync(message, CancellationToken.None));
+                 }
+             }
+
+             return updatedSubmission;
         }
         return null;
     }

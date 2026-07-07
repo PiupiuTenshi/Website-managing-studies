@@ -9,8 +9,6 @@ deployment/
 !.env.example
 appsettings.*.json
 !appsettings.example.json
-!apps/backend-dotnet/src/WebApi/appsettings.json
-!apps/backend-dotnet/src/WebApi/appsettings.Development.json
 
 # .NET
 bin/
