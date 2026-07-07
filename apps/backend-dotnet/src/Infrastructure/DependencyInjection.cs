@@ -8,6 +8,8 @@ using RemoteAssignment.Application.Organization;
 using RemoteAssignment.Infrastructure.Organization;
 using RemoteAssignment.Application.AssignmentAuthoring;
 using RemoteAssignment.Infrastructure.AssignmentAuthoring;
+using RemoteAssignment.Application.Submission;
+using RemoteAssignment.Infrastructure.Submission;
 
 namespace RemoteAssignment.Infrastructure;
 
@@ -28,6 +30,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, PostgresAuthService>();
         services.AddScoped<IOrganizationService, PostgresOrganizationService>();
         services.AddScoped<IAssignmentAuthoringService, PostgresAssignmentAuthoringService>();
+        services.AddScoped<ISubmissionService, PostgresSubmissionService>();
         services.AddHostedService<AuthBootstrapService>();
 
         return services;

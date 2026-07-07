@@ -180,6 +180,7 @@ app.MapPost("/api/users/{userId:guid}/unlock", async (
 
 app.MapOrganizationEndpoints();
 app.MapAssignmentAuthoringEndpoints();
+app.MapSubmissionEndpoints();
 
 app.MapGet("/api/admin/area", [Authorize(Policy = "AdminOnly")] (HttpContext httpContext) =>
 {
