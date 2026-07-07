@@ -10,6 +10,7 @@ using RemoteAssignment.Application.Common;
 using RemoteAssignment.Application.Health;
 using RemoteAssignment.Infrastructure;
 using RemoteAssignment.Infrastructure.Auth;
+using RemoteAssignment.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("StudentOnly", policy => policy.RequireRole(RoleNames.Student));
     options.AddPolicy("ParentOnly", policy => policy.RequireRole(RoleNames.Parent));
     options.AddPolicy("ManagerOrAdmin", policy => policy.RequireRole(RoleNames.Admin, RoleNames.Manager));
+    options.AddPolicy("ParentOrAdmin", policy => policy.RequireRole(RoleNames.Admin, RoleNames.Manager, RoleNames.Parent));
 });
 
 builder.Services.AddCors(options =>
@@ -175,6 +177,8 @@ app.MapPost("/api/users/{userId:guid}/unlock", async (
     var result = await authService.UnlockUserAsync(userId, BuildContext(httpContext), cancellationToken);
     return ToHttpResult(result, httpContext, "Account unlocked.");
 }).RequireAuthorization("AdminOnly");
+
+app.MapOrganizationEndpoints();
 
 app.MapGet("/api/admin/area", [Authorize(Policy = "AdminOnly")] (HttpContext httpContext) =>
 {
