@@ -35,7 +35,10 @@ public static class DependencyInjection
         services.Configure<RemoteAssignment.Application.Email.SmtpOptions>(configuration.GetSection(RemoteAssignment.Application.Email.SmtpOptions.SectionName));
         services.AddScoped<RemoteAssignment.Application.Email.IEmailService, RemoteAssignment.Infrastructure.Email.MailKitEmailService>();
         
+        services.AddScoped<RemoteAssignment.Application.Notification.INotificationService, RemoteAssignment.Infrastructure.Notification.PostgresNotificationService>();
+        
         services.AddHostedService<AuthBootstrapService>();
+        services.AddHostedService<RemoteAssignment.Infrastructure.BackgroundJobs.DeadlineReminderJob>();
 
         return services;
     }

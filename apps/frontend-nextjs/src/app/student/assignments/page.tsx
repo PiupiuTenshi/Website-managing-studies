@@ -66,8 +66,15 @@ export default function StudentAssignmentsPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="font-medium text-gray-900">{a.title}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {a.deadlineAt ? new Date(a.deadlineAt).toLocaleString() : 'Không có hạn'}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {a.deadlineAt ? (
+                          <span className={new Date(a.deadlineAt).getTime() - Date.now() < 24 * 60 * 60 * 1000 && new Date(a.deadlineAt).getTime() > Date.now() && !['Submitted', 'Late', 'Graded'].includes(a.submissionStatus || '') ? "text-orange-600 font-bold" : "text-gray-500"}>
+                            {new Date(a.deadlineAt).toLocaleString()}
+                            {new Date(a.deadlineAt).getTime() - Date.now() < 24 * 60 * 60 * 1000 && new Date(a.deadlineAt).getTime() > Date.now() && !['Submitted', 'Late', 'Graded'].includes(a.submissionStatus || '') && ' (Sắp hết hạn)'}
+                          </span>
+                        ) : (
+                          <span className="text-gray-500">Không có hạn</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {a.createdByName}

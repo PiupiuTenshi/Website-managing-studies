@@ -182,6 +182,7 @@ app.MapOrganizationEndpoints();
 app.MapAssignmentAuthoringEndpoints();
 app.MapSubmissionEndpoints();
 app.MapEmailEndpoints();
+app.MapNotificationEndpoints();
 
 app.MapGet("/api/admin/area", [Authorize(Policy = "AdminOnly")] (HttpContext httpContext) =>
 {
