@@ -6,6 +6,8 @@ using RemoteAssignment.Infrastructure.Auth;
 using RemoteAssignment.Infrastructure.Health;
 using RemoteAssignment.Application.Organization;
 using RemoteAssignment.Infrastructure.Organization;
+using RemoteAssignment.Application.AssignmentAuthoring;
+using RemoteAssignment.Infrastructure.AssignmentAuthoring;
 
 namespace RemoteAssignment.Infrastructure;
 
@@ -25,6 +27,7 @@ public static class DependencyInjection
         services.AddSingleton<ITokenService, JwtTokenService>();
         services.AddScoped<IAuthService, PostgresAuthService>();
         services.AddScoped<IOrganizationService, PostgresOrganizationService>();
+        services.AddScoped<IAssignmentAuthoringService, PostgresAssignmentAuthoringService>();
         services.AddHostedService<AuthBootstrapService>();
 
         return services;
