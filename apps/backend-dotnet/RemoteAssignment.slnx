@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Application/">
+    <Project Path="src/Application/RemoteAssignment.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/Domain/">
+    <Project Path="src/Domain/RemoteAssignment.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/RemoteAssignment.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Shared/">
+    <Project Path="src/Shared/RemoteAssignment.Shared.csproj" />
+  </Folder>
+  <Folder Name="/src/WebApi/">
+    <Project Path="src/WebApi/RemoteAssignment.WebApi.csproj" />
+  </Folder>
+</Solution>

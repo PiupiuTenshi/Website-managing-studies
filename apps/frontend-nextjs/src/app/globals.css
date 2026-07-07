@@ -1,0 +1,343 @@
+:root {
+  color-scheme: light;
+  --background: #f6f7f9;
+  --foreground: #17202a;
+  --muted: #5d6875;
+  --panel: #ffffff;
+  --line: #d9dde4;
+  --accent: #1677a5;
+  --accent-strong: #0d587d;
+  --success: #21845b;
+  --warning: #a15c00;
+  --danger: #b42318;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.workspace-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: 28px;
+  align-items: start;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--accent-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(2.2rem, 7vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.summary {
+  max-width: 640px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.home-actions {
+  display: flex;
+  margin-top: 24px;
+}
+
+.primary-link,
+.primary-action,
+.secondary-action {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-link,
+.primary-action {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.primary-link:hover,
+.primary-action:hover {
+  background: var(--accent-strong);
+}
+
+.primary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.secondary-action {
+  border-color: var(--line);
+  background: #ffffff;
+  color: var(--foreground);
+}
+
+.health-panel,
+.setup-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 16px 40px rgba(23, 32, 42, 0.07);
+}
+
+.health-panel {
+  min-height: 248px;
+  padding: 20px;
+}
+
+.panel-title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.panel-title h2 {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.badge {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.badge.ok {
+  background: var(--success);
+}
+
+.badge.idle {
+  background: var(--muted);
+}
+
+.badge.error {
+  background: var(--danger);
+}
+
+.health-details {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.health-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.health-row dd {
+  margin: 0;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+
+.health-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.icon-button {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--accent-strong);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  border-color: var(--accent);
+}
+
+.health-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 1120px;
+  margin: 34px auto 0;
+}
+
+.setup-item {
+  min-height: 110px;
+  padding: 18px;
+}
+
+.setup-item p {
+  margin: 14px 0 0;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.auth-page,
+.role-page {
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.auth-page {
+  display: grid;
+  place-items: center;
+}
+
+.auth-panel {
+  width: min(100%, 460px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 28px;
+  box-shadow: 0 16px 40px rgba(23, 32, 42, 0.07);
+}
+
+.auth-panel h1,
+.role-header h1 {
+  font-size: clamp(2rem, 6vw, 3.2rem);
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.auth-form input,
+.auth-form select {
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--foreground);
+  padding: 0 12px;
+}
+
+.auth-form input:focus,
+.auth-form select:focus {
+  outline: 2px solid rgba(22, 119, 165, 0.22);
+  border-color: var(--accent);
+}
+
+.form-error {
+  margin: 0;
+  color: var(--danger);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.role-page {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.role-header {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.role-content {
+  margin-top: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 24px;
+}
+
+.status-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--success);
+}
+
+@media (max-width: 900px) {
+  .page-shell {
+    padding: 24px;
+  }
+
+  .workspace-header,
+  .setup-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .role-header {
+    display: grid;
+  }
+}
