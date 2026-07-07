@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<RemoteAssignment.Application.Email.IEmailService, RemoteAssignment.Infrastructure.Email.MailKitEmailService>();
         
         services.AddScoped<RemoteAssignment.Application.Notification.INotificationService, RemoteAssignment.Infrastructure.Notification.PostgresNotificationService>();
+        services.AddScoped<RemoteAssignment.Application.Chat.IChatService, RemoteAssignment.Infrastructure.Chat.PostgresChatService>();
         
         services.AddHostedService<AuthBootstrapService>();
         services.AddHostedService<RemoteAssignment.Infrastructure.BackgroundJobs.DeadlineReminderJob>();

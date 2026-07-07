@@ -41,7 +41,23 @@ builder.Services
             RoleClaimType = ClaimTypes.Role,
             NameClaimType = JwtRegisteredClaimNames.Sub
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
+
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthorization(options =>
 {
@@ -183,6 +199,7 @@ app.MapAssignmentAuthoringEndpoints();
 app.MapSubmissionEndpoints();
 app.MapEmailEndpoints();
 app.MapNotificationEndpoints();
+app.MapChatEndpoints();
 
 app.MapGet("/api/admin/area", [Authorize(Policy = "AdminOnly")] (HttpContext httpContext) =>
 {
@@ -198,6 +215,8 @@ app.MapGet("/api/parent/area", [Authorize(Policy = "ParentOnly")] (HttpContext h
 {
     return Results.Ok(ApiResponse<object>.Ok(new { area = "parent" }, httpContext.TraceIdentifier));
 });
+
+app.MapHub<RemoteAssignment.Infrastructure.Chat.ChatHub>("/hubs/chat");
 
 app.Run();
 

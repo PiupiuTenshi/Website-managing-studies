@@ -28,6 +28,9 @@ export function RoleShell({
             </p>
           </div>
           <div className="flex items-center gap-4">
+            <a href="/chat" className="text-blue-600 hover:underline font-medium flex items-center gap-1">
+              💬 Chat
+            </a>
             <NotificationBell />
             <button className="secondary-action" type="button" onClick={() => void logout()}>
               Sign out
