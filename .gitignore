@@ -1,0 +1,62 @@
+# Private handbook and deployment material
+docs/
+templates/
+deployment/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+appsettings.*.json
+!appsettings.example.json
+!apps/backend-dotnet/src/WebApi/appsettings.json
+!apps/backend-dotnet/src/WebApi/appsettings.Development.json
+
+# .NET
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+*.rsuser
+*.nupkg
+*.snupkg
+coverage/
+coverage.*
+
+# Node / Next.js
+node_modules/
+.npm-cache/
+.next/
+out/
+dist/
+build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# Cloudflare / local tool state
+.wrangler/
+.dev.vars
+.data-protection-keys/
+
+# IDE and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Unity-style generated artifacts, if supporting files are added later
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+*.csproj.AssemblyReference.cache
+
+# Agent skills
+.agents/
